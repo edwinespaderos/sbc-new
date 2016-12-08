@@ -193,17 +193,18 @@ $('#confirm').click(function(){
             finder.insertBefore(text, finder.firstChild);
         }
 
-        var protocol = location.protocol !== 'file:' ? location.protocol : 'http:';
-        fetch(protocol + '//stout-brand-finder.herokuapp.com/graphql?query=' + encodeURIComponent(getQuery(postalCode)))
-            .then(function(resp) { return resp.json(); })
-            .then(function (data) {
-                draw(data.data.locations);
-                return data;
-            })
-            .catch(function (err) {
-                console.log(err);
-                return err;
-            });
+        fetch('https://stoutbrewingcompanyapi.com/product-finder', {
+            headers: {'Content-Type': 'application/graphql'},
+            method: 'POST',
+            mode: 'cors',
+            body: getQuery(postalCode)
+        })
+        .then(function(resp) { return resp.json(); })
+        .then(function (resp) { draw(resp.data.locations); })
+        .catch(function (err) {
+            console.log(err);
+            return err;
+        });
     }
 
     const finder = document.getElementById('finder-box');
